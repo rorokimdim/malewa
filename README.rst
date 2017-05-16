@@ -3,6 +3,8 @@ Malewa
 
 Simple minded early-retirement planner.
 
+Check out http://malewa.s3-website-us-west-2.amazonaws.com/
+
 Overview
 --------
 
