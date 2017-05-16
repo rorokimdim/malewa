@@ -37,4 +37,10 @@
         ")."
         ]
        [:p "Congratulations! You will have enough money to last forever!"
-        " You should retire or live more lavishly!"])]))
+        " You should retire earlier or live more lavishly during retirement!"])
+     [:p
+      "The following chart shows your balance in non-retirement accounts over years; starting with 0, the current year."
+      " Green bars indicate a positive balance. Red bars indicate a negative balance."
+      " The bar highlighted in black indicates the year you plan to retire."
+      " The bar highlighted in blue indicates the year you can withdraw from your retirement accounts without penalty."]
+     ]))
