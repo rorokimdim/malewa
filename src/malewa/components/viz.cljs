@@ -23,18 +23,15 @@
   "Gets SVG width."
   (+ (chart-width) CHART-PADDING-HEIGHT))
 
+(defn abs [n] (if (neg? n) (* -1 n) n))
 
 (defn find-abs-max-value [key computations]
   "Finds max of absolute values of given KEY in COMPUTATIONS."
-  (reduce #(max (.abs js/Math (key %1))
-                (.abs js/Math (key %2)))
-          computations))
+  (abs (:balance (apply max-key #(abs (:balance %1)) computations))))
 
 (defn find-abs-min-value [key computations]
   "Finds min of absolute values of given KEY in COMPUTATIONS."
-  (reduce #(min (.abs js/Math (key %1))
-                (.abs js/Math (key %2)))
-          computations))
+  (abs (:balance (apply min-key #(abs (:balance %1)) computations))))
 
 (defn svg-did-mount [node ratom]
   "Mount function for svg component."
@@ -123,8 +120,8 @@
                                RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR
                                :else nil))))
         (.attr "x" (fn [d] (x-scale (aget d "year"))))
-        (.attr "y" (fn [d] (y-scale (.abs js/Math (aget d "balance")))))
-        (.attr "height" (fn [d] (- CHART-HEIGHT (y-scale (.abs js/Math (aget d "balance"))))))
+        (.attr "y" (fn [d] (y-scale (abs (aget d "balance")))))
+        (.attr "height" (fn [d] (- CHART-HEIGHT (y-scale (abs (aget d "balance"))))))
         (.attr "width" CHART-BAR-WIDTH))))
 
 (defn viz-comp [ratom]
