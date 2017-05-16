@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+set -o pipefail
+
+lein cljsbuild once min
+rm -rf release
+cp -r resources/release release
