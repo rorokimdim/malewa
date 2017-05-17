@@ -10,6 +10,18 @@
                           js/parseFloat
                           (#(if (js/isNaN %1) 0 %1)))))
 
+(defn inc-key! [key event]
+  "Increments value of a key by 1."
+  (let [c (get-config)
+        current-target (key c)]
+    (update-config! key (inc current-target))))
+
+(defn dec-key! [key event]
+  "Decrements value of a key by 1."
+  (let [c (get-config)
+        current-target (key c)]
+    (update-config! key (dec current-target))))
+
 (defn config-text-input-comp [key]
   "Builds a text input component."
   [:input {:type "text"
@@ -73,6 +85,12 @@
        [:tr
         [:td
          [:span {:style {:padding-right "15px"}} "Target retirement after"]
-         [config-slider-input-comp :target-retirement-after-years 0 100]]
-        [:td.value [:span {:style {:font-size "30px"}}
-                    (:target-retirement-after-years config) " Years"]]]]]]))
+         [config-slider-input-comp :target-retirement-after-years 0 100]
+         ]
+        [:td.value
+         [:input {:type "button" :value "<<"
+                  :on-click (partial dec-key! :target-retirement-after-years)}]
+         [:span {:style {:font-size "30px" :margin "5px"}}
+          (:target-retirement-after-years config) " Years"]
+         [:input {:type "button" :value ">>"
+                  :on-click (partial inc-key! :target-retirement-after-years)}]]]]]]))
