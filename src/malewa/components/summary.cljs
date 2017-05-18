@@ -6,16 +6,19 @@
 (defn summary-comp [computations]
   "Builds summary component."
   (let [config (get-config)
+        target-year (:target-retirement-after-years config)
+        balance-at-retirement (:balance (nth computations target-year))
         expenses-per-year (:expenses-per-year-during-retirement config)
-        broke-year-c (some #(when (>= expenses-per-year (:balance %)) %) computations)
+        broke-year-c (some #(when (and
+                                   (<= target-year (:year %))
+                                   (>= expenses-per-year (:balance %))) %) computations)
         before-broke-year (max (if broke-year-c (dec (:year broke-year-c)) 0) 0)
         before-broke-year-c (nth computations before-broke-year)]
     [:div
-     [:p "You plan to retire in " (:target-retirement-after-years config) " years."
+     [:p "You plan to retire in " target-year " years."
       " You expect your expenses to be less than "
       (u/format-with-commas (js/parseInt (:expenses-per-year-during-retirement config)))
-      " per year."
-      ]
+      " per year."]
      [:p "You currently have "
       (u/format-with-commas (js/parseInt (:current-balance config)))
       " invested in non-retirement accounts, and "
@@ -27,7 +30,9 @@
       " years, you will incur a 10 % penalty tax (in addition to income-tax on"
       " any non-roth retirement accounts)."]
      (if broke-year-c
-       [:p "You will have enough money till year "
+       [:p "At the time you retire, you will have "
+        (u/format-with-commas (js/parseInt balance-at-retirement))
+        ". That will last you till year "
         (dec (:year broke-year-c))
         ", when you will be " (+ (:year broke-year-c) (- (u/current-year) (:birth-year config)))
         " years old. After that you will have to cash our your retirement account balance ("

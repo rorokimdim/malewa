@@ -1,6 +1,6 @@
 (ns malewa.components.config
-  (:require [malewa.utils :as u]
-            [malewa.dao :refer [get-config reset-config! update-config!]]))
+  (:require [malewa.dao :refer [MAX-VALID-TARGET-RETIREMENT-YEAR
+                                get-config reset-config! update-config!]]))
 
 (defn update-config-on-change [key event]
   "Updates state variable for KEY on EVENT."
@@ -41,7 +41,8 @@
 
 (defn config-comp []
   "Builds configuration component."
-  (let [config (get-config)]
+  (let [config (get-config)
+        birth-year (:birth-year config)]
     [:div
      [:h3 "Configuration"
       [:input {:type "button"
@@ -87,12 +88,13 @@
        [:tr
         [:td
          [:span {:style {:padding-right "15px"}} "Target retirement after"]
-         [config-slider-input-comp :target-retirement-after-years 0 100]
-         ]
+         [config-slider-input-comp :target-retirement-after-years 0
+          MAX-VALID-TARGET-RETIREMENT-YEAR]]
         [:td.value
          [:input {:type "button" :value "<<"
                   :on-click (partial dec-key! :target-retirement-after-years 0)}]
          [:span {:style {:font-size "30px" :margin "5px"}}
           (:target-retirement-after-years config) " Years"]
          [:input {:type "button" :value ">>"
-                  :on-click (partial inc-key! :target-retirement-after-years 100)}]]]]]]))
+                  :on-click (partial inc-key! :target-retirement-after-years
+                                     MAX-VALID-TARGET-RETIREMENT-YEAR)}]]]]]]))

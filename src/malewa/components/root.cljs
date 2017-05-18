@@ -5,6 +5,7 @@
             [malewa.components.viz :refer [viz-comp]]
             [malewa.finance :as f]
             [malewa.dao :refer [COMPUTATIONS
+                                MAX-VALID-TARGET-RETIREMENT-YEAR
                                 get-config
                                 get-validation-error
                                 reset-computations!]]))
@@ -16,7 +17,7 @@
      [config-comp]
      (if-let [e (get-validation-error)]
        [:p.error "Bad configuration: " e]
-       (let [computations (reset-computations! (f/compute config))]
+       (let [computations (reset-computations! (f/compute config MAX-VALID-TARGET-RETIREMENT-YEAR))]
          [:div
           [:h3 "Summary"]
           [summary-comp computations]

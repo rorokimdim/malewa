@@ -55,12 +55,12 @@
             post-tax (* (- 1 tax) pre-tax)]
         [pre-tax post-tax]))))
 
-(defn compute [config]
-  "Performs computations."
+(defn compute [config n]
+  "Performs computations for N years."
   (let [memoized-balance (memoize balance)
         memoized-retirement-account-balance (memoize retirement-account-balance)
-        n (- 100 (- (u/current-year) (:birth-year config)))]
-    (for [y (range n)]
+        birth-year (:birth-year config)]
+    (for [y (range (inc n))]
       {:year y
        :investment (investment config y)
        :balance (memoized-balance config y memoized-balance)

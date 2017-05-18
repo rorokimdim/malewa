@@ -10,7 +10,7 @@
 (def CHART-BAR-WIDTH 5)
 (def CHART-HEIGHT 200)
 (def CHART-PADDING-HEIGHT 50)
-(def CHART-PADDING-WIDTH 50)
+(def CHART-PADDING-WIDTH 80)
 (def CHART-WIDTH-PCT 0.80)
 
 (def SVG-HEIGHT (+ CHART-HEIGHT CHART-PADDING-HEIGHT))
@@ -21,7 +21,7 @@
 
 (defn svg-width []
   "Gets SVG width."
-  (+ (chart-width) CHART-PADDING-HEIGHT))
+  (+ (chart-width) CHART-PADDING-WIDTH))
 
 (defn abs [n] (if (neg? n) (* -1 n) n))
 
@@ -106,7 +106,6 @@
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
                                     config)
         computations @ratom
-        n  (count computations)
         x-scale (create-x-scale computations)
         y-scale (create-y-scale computations)]
     (-> node
