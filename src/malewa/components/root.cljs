@@ -21,6 +21,8 @@
          [:div
           [:h3 "Summary"]
           [summary-comp computations]
-          [viz-comp COMPUTATIONS]
+          [viz-comp [:balance] "Balance in non-retirement accounts over years" COMPUTATIONS]
+          [viz-comp [:retirement-account-balance-pre-tax :retirement-account-balance-post-tax]
+           "Balance in retirement accounts over years" COMPUTATIONS]
           [:h3 "Computations"]
           [computations-comp computations]]))]))

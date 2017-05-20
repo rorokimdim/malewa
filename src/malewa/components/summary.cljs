@@ -36,7 +36,8 @@
         (dec (:year broke-year-c))
         ", when you will be " (+ (:year broke-year-c) (- (u/current-year) (:birth-year config)))
         " years old. After that you will have to cash our your retirement account balance ("
-        (let [[pre-tax post-tax] (:retirement-account-balance before-broke-year-c)]
+        (let [pre-tax (:retirement-account-balance-pre-tax before-broke-year-c)
+              post-tax (:retirement-account-balance-post-tax before-broke-year-c)]
           (str "pre/post tax: " (u/format-with-commas (js/parseInt pre-tax))
                " / " (u/format-with-commas (js/parseInt post-tax))))
         ")."
@@ -44,8 +45,9 @@
        [:p "Congratulations! You will have enough money to last forever!"
         " You should retire earlier or live more lavishly during retirement!"])
      [:p
-      "The following chart shows your balance in non-retirement accounts over years; starting with 0, the current year."
-      " Green bars indicate a positive balance. Red bars indicate a negative balance."
+      "The first chart below shows your balance in non-retirement accounts over years; starting with 0, the current year."
+      " Similarly, the second chart shows your balance in retirement accounts; blue is pre-tax balance, orange is post-tax balance."
+      " Years without any bars imply that you have run out of money."
       " The bar highlighted in black indicates the year you plan to retire."
       " The bar highlighted in blue indicates the year you can withdraw from your retirement accounts without penalty."]
      ]))

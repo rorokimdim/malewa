@@ -2,8 +2,14 @@
   (:require [rid3.core :as d3]
             [malewa.finance :as f]
             [malewa.dao :refer [get-config get-window-width get-window-height]]))
-(def POSITIVE-BAR-COLOR "#31a354")
-(def NEGATIVE-BAR-COLOR "#e6550d")
+
+(def BAR-COLORS {:balance "#31a354"
+                 :retirement-account-balance-pre-tax "#316395"
+                 :retirement-account-balance-post-tax "#ff9900"})
+(def BAR-OFFSETS {:balance 0
+                  :retirement-account-balance-pre-tax -0.1
+                  :retirement-account-balance-post-tax 0.1})
+
 (def TARGET-YEAR-STROKE-COLOR "black")
 (def RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR "blue")
 
@@ -23,15 +29,35 @@
   "Gets SVG width."
   (+ (chart-width) CHART-PADDING-WIDTH))
 
-(defn abs [n] (if (neg? n) (* -1 n) n))
+(defn filter-positive-values [dicts keys]
+  "Filters DICTS with positive values for KEYS."
+  (loop [ikeys keys
+         result dicts]
+    (if (seq ikeys)
+      (recur (rest ikeys)
+             (filter #(pos? ((first ikeys) %)) result))
+      result)))
 
-(defn find-abs-max-value [key computations]
-  "Finds max of absolute values of given KEY in COMPUTATIONS."
-  (abs (:balance (apply max-key #(abs (:balance %1)) computations))))
+(defn find-max-value [keys dicts]
+  "Finds max of values of given KEYS in DICTS."
+  (loop [ikeys keys
+         result nil]
+    (if (seq ikeys)
+      (recur (rest ikeys)
+             (apply max (conj (map (first ikeys) dicts) result)))
+      result)))
 
-(defn find-abs-min-value [key computations]
-  "Finds min of absolute values of given KEY in COMPUTATIONS."
-  (abs (:balance (apply min-key #(abs (:balance %1)) computations))))
+(defn find-min-value [keys dicts]
+  "Finds min of values of given KEYS in DICTS."
+  (loop [ikeys keys
+         result nil]
+    (if (seq ikeys)
+      (recur (rest ikeys)
+             (let [candidates (map (first ikeys) dicts)]
+               (if (nil?  result)
+                 (apply min candidates)
+                 (apply min (conj candidates result)))))
+      result)))
 
 (defn svg-did-mount [node ratom]
   "Mount function for svg component."
@@ -51,19 +77,22 @@
       (.attr "transform" "translate(50, 0)")))
 
 (defn create-x-scale [computations]
+  "Creates x-scale for plotting given computations."
   (-> js/d3
       .scaleLinear
       (.domain #js [0 (count computations)])
       (.range #js [0 (chart-width)])))
 
-(defn create-y-scale [computations]
+(defn create-y-scale [keys computations]
+  "Creates y-scale for plotting given computations."
   (-> js/d3
       .scaleLinear
-      (.domain #js [(find-abs-min-value :balance computations)
-                    (find-abs-max-value :balance computations)])
+      (.domain #js [(find-min-value keys computations)
+                    (find-max-value keys computations)])
       (.range #js [CHART-HEIGHT 0])))
 
-(defn x-axis [node ratom]
+(defn x-axis [keys node ratom]
+  "Builds x-axis."
   (let [computations @ratom
         x-scale (create-x-scale computations)]
     (-> node
@@ -73,23 +102,25 @@
         (.select "path")
         (.style "stroke" "none"))))
 
-(defn y-axis [node ratom]
-  (let [computations @ratom
-        y-scale (create-y-scale computations)]
+(defn y-axis [keys node ratom]
+  "Builds y-axis."
+  (let [computations (filter-positive-values @ratom keys)
+        y-scale (create-y-scale keys computations)]
     (-> node
         (.call (-> (.axisLeft js/d3 y-scale)
                    (.ticks 5)
                    (.tickFormat (fn [d]
                                   (let [thousands (/ d 1000)
                                         millions (/ d 1000000)]
-                                    (if (> millions 1) (str millions "M")
+                                    (if (>= millions 1) (str millions "M")
                                         (str thousands "K")))))
                    (.tickSizeInner #js [(- 5)]))))
     (-> node
         (.select "path")
         (.style "stroke" "none"))))
 
-(defn chart-label [node ratom]
+(defn chart-label [text node ratom]
+  "Builds a label with TEXT."
   (-> node
       (.attr "x" (/ (chart-width) 2))
       (.attr "y" (- SVG-HEIGHT 10))
@@ -97,20 +128,28 @@
       (.attr "font-size" 14)
       (.attr "font-family" "sans-serif")
       (.attr "fill" "#5D6971")
-      (.text "Balance in non-retirement accounts over years")))
+      (.text text)))
 
-(defn bars [node ratom]
+(defn positive-or-zero [n]
+  "Returns N if it is non-negative, else returns 0."
+  (if (neg? n) 0 n))
+
+(defn zero-if-nan [n]
+  "Returns N if it is a number, else returns 0."
+  (if (js/isNaN n) 0 n))
+
+(defn bars [keys key node ratom]
   "Builds SVG bars."
   (let [config (get-config)
         target-year (:target-retirement-after-years config)
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
                                     config)
         computations @ratom
+        positive-computations (filter-positive-values computations keys)
         x-scale (create-x-scale computations)
-        y-scale (create-y-scale computations)]
+        y-scale (create-y-scale keys positive-computations)]
     (-> node
-        (.attr "fill" (fn [d] (let [b (aget d "balance")]
-                                (if (> b 0) POSITIVE-BAR-COLOR NEGATIVE-BAR-COLOR))))
+        (.attr "fill" (key BAR-COLORS))
         (.style "stroke" (fn [d]
                            (let [year (aget d "year")]
                              (cond
@@ -118,37 +157,40 @@
                                (= year retirement-withdrawal-year)
                                RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR
                                :else nil))))
-        (.attr "x" (fn [d] (x-scale (aget d "year"))))
-        (.attr "y" (fn [d] (y-scale (abs (aget d "balance")))))
-        (.attr "height" (fn [d] (- CHART-HEIGHT (y-scale (abs (aget d "balance"))))))
+        (.attr "x" (fn [d] (x-scale (+ (key BAR-OFFSETS) (aget d "year")))))
+        (.attr "y" (fn [d] (zero-if-nan (y-scale (positive-or-zero (aget d (name key)))))))
+        (.attr "height" (fn [d] (positive-or-zero
+                                 (zero-if-nan (- CHART-HEIGHT
+                                                 (y-scale (positive-or-zero (aget d (name key)))))))))
         (.attr "width" CHART-BAR-WIDTH))))
 
-(defn viz-comp [ratom]
-  "Builds visualization component."
+(defn viz-comp [keys label ratom]
+  "Builds visualization component for values of given KEYS."
   (chart-width) ;; Hack to update this component when window is resized
   [d3/viz
-   {:id "barchart"
+   {:id (apply str (map name keys))
     :ratom ratom
     :svg {:did-mount svg-did-mount
           :did-update svg-did-update}
     :main-container {:did-mount main-container-did-mount}
-    :pieces [{:kind :container
-              :class "x-axis"
-              :children
-              [{:kind :container
-                :class  "x-axis"
-                :did-mount x-axis}
-               {:kind :container
-                :class  "y-axis"
-                :did-mount y-axis}
-               ]}
-             {:kind :elem
-              :class "chart-label"
-              :tag "text"
-              :did-mount chart-label}
-             {:kind :elem-with-data
-              :class "bars"
-              :tag "rect"
-              :prepare-dataset (fn [ratom] (-> @ratom clj->js))
-              :did-mount bars
-              :did-update bars}]}])
+    :pieces (concat [{:kind :container
+                      :class "x-axis"
+                      :children
+                      [{:kind :container
+                        :class  "x-axis"
+                        :did-mount (partial x-axis keys)}
+                       {:kind :container
+                        :class  "y-axis"
+                        :did-mount (partial y-axis keys)}
+                       ]}
+                     {:kind :elem
+                      :class "chart-label"
+                      :tag "text"
+                      :did-mount (partial chart-label label)}]
+                    (for [key keys]
+                      {:kind :elem-with-data
+                       :class (name key)
+                       :tag "rect"
+                       :prepare-dataset (fn [ratom] (-> @ratom clj->js))
+                       :did-mount (partial bars keys key)
+                       :did-update (partial bars keys key)}))}])

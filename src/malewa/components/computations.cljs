@@ -30,8 +30,7 @@
               [:td.currency bf]))
           [:td.currency (u/format-with-commas (js/parseInt (:expense c)))]
           [:td.currency (u/format-with-commas (js/parseInt (:retirement-account-investment c)))]
-          (let [[pre-tax post-tax] (:retirement-account-balance c)]
-            [:td.currency
-             (u/format-with-commas (js/parseInt pre-tax))
-             " / "
-             (u/format-with-commas (js/parseInt post-tax))])]))]]))
+          [:td.currency
+           (u/format-with-commas (js/parseInt (:retirement-account-balance-pre-tax c)))
+           " / "
+           (u/format-with-commas (js/parseInt (:retirement-account-balance-post-tax c)))]]))]]))

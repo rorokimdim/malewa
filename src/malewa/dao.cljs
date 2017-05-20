@@ -3,7 +3,7 @@
             [alandipert.storage-atom :as ls]
             [malewa.utils :as u]))
 
-(def MAX-VALID-TARGET-RETIREMENT-YEAR 80)
+(def MAX-VALID-TARGET-RETIREMENT-YEAR 50)
 
 (def APP-STATE
   (ls/local-storage

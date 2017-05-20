@@ -61,11 +61,15 @@
         memoized-retirement-account-balance (memoize retirement-account-balance)
         birth-year (:birth-year config)]
     (for [y (range (inc n))]
-      {:year y
-       :investment (investment config y)
-       :balance (memoized-balance config y memoized-balance)
-       :expense (expense config y)
-       :retirement-account-investment (retirement-account-investment config y)
-       :retirement-account-balance (memoized-retirement-account-balance
-                                    config y
-                                    memoized-retirement-account-balance)})))
+      (let [rbalance (memoized-retirement-account-balance
+                      config y
+                      memoized-retirement-account-balance)
+            [retirement-account-balance-pre-tax
+             retirement-account-balance-post-tax] rbalance]
+        {:year y
+         :investment (investment config y)
+         :balance (memoized-balance config y memoized-balance)
+         :expense (expense config y)
+         :retirement-account-investment (retirement-account-investment config y)
+         :retirement-account-balance-pre-tax retirement-account-balance-pre-tax
+         :retirement-account-balance-post-tax retirement-account-balance-post-tax}))))
