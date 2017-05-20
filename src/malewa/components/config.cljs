@@ -1,14 +1,16 @@
 (ns malewa.components.config
   (:require [malewa.dao :refer [MAX-VALID-TARGET-RETIREMENT-YEAR
-                                get-config reset-config! update-config!]]))
+                                get-config reset-config! update-config! reset-validation!]]))
 
 (defn update-config-on-change [key event]
   "Updates state variable for KEY on EVENT."
-  (update-config! key (-> event
-                          .-target
-                          .-value
-                          js/parseFloat
-                          (#(if (js/isNaN %1) 0 %1)))))
+  (let [value (-> event
+                  .-target
+                  .-value)
+        float-value (js/parseFloat value)]
+    (if (not (js/isNaN float-value))
+      (update-config! key float-value)
+      (reset-validation! 1))))
 
 (defn inc-key! [key maximum event]
   "Increments value of a key by 1."
@@ -27,13 +29,15 @@
 (defn config-text-input-comp [key]
   "Builds a text input component."
   [:input {:type "text"
+           :id key
            :style {:text-align "right"}
-           :value (key (get-config))
+           :default-value (key (get-config))
            :on-change (partial update-config-on-change key)}])
 
 (defn config-slider-input-comp [key min max]
   "Builds a slider input component."
   [:input {:type "range"
+           :id key
            :value (key (get-config))
            :min min
            :max max
@@ -48,7 +52,8 @@
       [:input {:type "button"
                :style {:margin-left "10px"}
                :value "RESET"
-               :on-click reset-config!}]]
+               :on-click #(do (reset-config!)
+                              (.reload (.-location js/window)))}]]
      [:table.config
       [:tbody
        [:tr [:td.title {:colSpan "2"} "Non-retirement-account Investment"]]

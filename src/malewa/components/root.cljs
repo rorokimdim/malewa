@@ -5,6 +5,7 @@
             [malewa.components.viz :refer [viz-comp]]
             [malewa.finance :as f]
             [malewa.dao :refer [COMPUTATIONS
+                                VALIDATION
                                 MAX-VALID-TARGET-RETIREMENT-YEAR
                                 get-config
                                 get-validation-error
@@ -12,6 +13,7 @@
 
 (defn root-comp []
   "Builds root component."
+  @VALIDATION ;; Force data re-validation if this flag changes
   (let [config (get-config)]
     [:div
      [config-comp]

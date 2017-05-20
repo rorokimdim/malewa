@@ -5,6 +5,22 @@
 
 (def MAX-VALID-TARGET-RETIREMENT-YEAR 50)
 
+(defn describe-config-key [key]
+  "Gets description for a configuration key."
+  (case key
+    :birth-year "Birth Year"
+    :current-balance "Non-retirement - Current investment balance"
+    :investment-per-year "Non-retirement - Investment per year"
+    :interest-per-year "Interest on investments per year"
+    :target-retirement-after-years "Target retirement after"
+    :expenses-per-year-during-retirement "Expenses per year during retirement"
+    :long-term-capital-gain-tax "Long term capital gain tax on selling investments"
+    :retirement-account-current-balance "Retirement - Current investment balance"
+    :retirement-account-investment-per-year "Retirement - Investment per year"
+    :retirement-account-tax-at-withdrawal "Retirement - Tax at withdrawal"
+    :retirement-account-penalty-tax-at-early-withdrawal "Retirement - Penalty tax at early withdrawal"
+    key))
+
 (def APP-STATE
   (ls/local-storage
    (r/atom
@@ -22,6 +38,7 @@
    :APP-STATE))
 
 (defonce COMPUTATIONS (r/atom []))
+(defonce VALIDATION (r/atom 0)) ;; Atom to notify that we need to re-validate configuration data
 
 (defonce WINDOW-DIMS
   (r/atom
@@ -44,6 +61,9 @@
   "Resets computations to new value."
   (reset! COMPUTATIONS computations))
 
+(defn reset-validation! [flag]
+  (reset! VALIDATION (+ @VALIDATION flag)))
+
 (defn update-window-dims! []
   "Updates window dimensions to current window dimensions."
   (reset! WINDOW-DIMS
@@ -60,7 +80,10 @@
 
 (defn get-validation-error []
   "Gets the first configuration error found."
-  (let [yob (:birth-year (get-config))]
+  (let [config (get-config)
+        invalid-value-key (some #(when (js/isNaN (u/float-value-by-id (name %))) %) (keys config))
+        yob (:birth-year config)]
     (cond
-      (not (and (> yob 1900) (< yob (u/current-year)))) "Invalid Birth Year"
+      invalid-value-key (str (describe-config-key invalid-value-key) " must be a number.")
+      (not (and (> yob 1900) (< yob (u/current-year)))) "Invalid value for Birth Year."
       :else nil)))
