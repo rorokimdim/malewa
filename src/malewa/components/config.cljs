@@ -96,10 +96,10 @@
          [config-slider-input-comp :target-retirement-after-years 0
           MAX-VALID-TARGET-RETIREMENT-YEAR]]
         [:td.value
-         [:input {:type "button" :value "<<"
+         [:input {:type "button" :value "←"
                   :on-click (partial dec-key! :target-retirement-after-years 0)}]
-         [:span {:style {:font-size "30px" :margin "5px"}}
+         [:span {:style {:font-size 14 :display "inline-block" :margin "5px"}}
           (:target-retirement-after-years config) " Years"]
-         [:input {:type "button" :value ">>"
+         [:input {:type "button" :value "→"
                   :on-click (partial inc-key! :target-retirement-after-years
                                      MAX-VALID-TARGET-RETIREMENT-YEAR)}]]]]]]))

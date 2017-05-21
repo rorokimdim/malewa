@@ -1,19 +1,20 @@
 (ns malewa.components.viz
   (:require [rid3.core :as d3]
+            [malewa.utils :as u]
             [malewa.finance :as f]
-            [malewa.dao :refer [get-config get-window-width get-window-height]]))
+            [malewa.dao :refer [get-config get-window-width get-window-height reset-selected-value!]]))
 
 (def BAR-COLORS {:balance "#31a354"
                  :retirement-account-balance-pre-tax "#316395"
                  :retirement-account-balance-post-tax "#ff9900"})
 (def BAR-OFFSETS {:balance 0
-                  :retirement-account-balance-pre-tax -0.1
-                  :retirement-account-balance-post-tax 0.1})
+                  :retirement-account-balance-pre-tax -0.25
+                  :retirement-account-balance-post-tax 0.25})
 
 (def TARGET-YEAR-STROKE-COLOR "black")
 (def RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR "blue")
 
-(def CHART-BAR-WIDTH 5)
+(def CHART-BAR-WIDTH 10)
 (def CHART-HEIGHT 200)
 (def CHART-PADDING-HEIGHT 50)
 (def CHART-PADDING-WIDTH 80)
@@ -150,6 +151,7 @@
         y-scale (create-y-scale keys positive-computations)]
     (-> node
         (.attr "fill" (key BAR-COLORS))
+        (.style "cursor" "hand")
         (.style "stroke" (fn [d]
                            (let [year (aget d "year")]
                              (cond
@@ -162,7 +164,27 @@
         (.attr "height" (fn [d] (positive-or-zero
                                  (zero-if-nan (- CHART-HEIGHT
                                                  (y-scale (positive-or-zero (aget d (name key)))))))))
-        (.attr "width" CHART-BAR-WIDTH))))
+        (.attr "width" CHART-BAR-WIDTH)
+        (.on "click" (fn [d]
+                       (let [year (aget d "year")
+                             value (aget d (name key))
+                             formatted-value (u/format-with-commas (js/parseInt value))]
+                         (reset-selected-value! (str "Year " year ": " formatted-value))
+                         (-> (js/d3.select "#selected")
+                             (.style "left" (str (- js/d3.event.pageX 50) "px"))
+                             (.style "top" (str (- js/d3.event.pageY 100) "px"))
+                             (.style "display" "inline-block")))))
+        (.on "mouseover" (fn []
+                           (this-as this
+                             (-> (js/d3.select this)
+                                 (.style "fill" "brown")))))
+        (.on "mouseout" (fn [d]
+                          (this-as this
+                            (-> (js/d3.select this)
+                                (.style "fill" (key BAR-COLORS))))
+                          (-> (js/d3.select "#selected") (.style "display" "none"))
+                          (reset-selected-value! nil)))
+        )))
 
 (defn viz-comp [keys label ratom]
   "Builds visualization component for values of given KEYS."

@@ -38,6 +38,7 @@
    :APP-STATE))
 
 (defonce COMPUTATIONS (r/atom []))
+(defonce SELECTED-VALUE (r/atom nil)) ;; Atom to indicate any selected value
 (defonce VALIDATION (r/atom 0)) ;; Atom to notify that we need to re-validate configuration data
 
 (defonce WINDOW-DIMS
@@ -63,6 +64,10 @@
 
 (defn reset-validation! [flag]
   (reset! VALIDATION (+ @VALIDATION flag)))
+
+(defn reset-selected-value! [v]
+  "Updates SELECTED-VALUE atom to V."
+  (reset! SELECTED-VALUE v))
 
 (defn update-window-dims! []
   "Updates window dimensions to current window dimensions."

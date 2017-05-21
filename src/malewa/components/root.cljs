@@ -1,6 +1,7 @@
 (ns malewa.components.root
   (:require [malewa.components.config :refer [config-comp]]
             [malewa.components.summary :refer [summary-comp]]
+            [malewa.components.selected :refer [selected-comp]]
             [malewa.components.computations :refer [computations-comp]]
             [malewa.components.viz :refer [viz-comp]]
             [malewa.finance :as f]
@@ -24,6 +25,7 @@
           [:h3 "Summary"]
           [summary-comp computations]
           [viz-comp [:balance] "Balance in non-retirement accounts over years" COMPUTATIONS]
+          [selected-comp computations]
           [viz-comp [:retirement-account-balance-pre-tax :retirement-account-balance-post-tax]
            "Balance in retirement accounts over years" COMPUTATIONS]
           [:h3 "Computations"]
