@@ -30,36 +30,6 @@
   "Gets SVG width."
   (+ (chart-width) CHART-PADDING-WIDTH))
 
-(defn filter-positive-values [dicts keys]
-  "Filters DICTS with positive values for KEYS."
-  (loop [ikeys keys
-         result dicts]
-    (if (seq ikeys)
-      (recur (rest ikeys)
-             (filter #(pos? ((first ikeys) %)) result))
-      result)))
-
-(defn find-max-value [keys dicts]
-  "Finds max of values of given KEYS in DICTS."
-  (loop [ikeys keys
-         result nil]
-    (if (seq ikeys)
-      (recur (rest ikeys)
-             (apply max (conj (map (first ikeys) dicts) result)))
-      result)))
-
-(defn find-min-value [keys dicts]
-  "Finds min of values of given KEYS in DICTS."
-  (loop [ikeys keys
-         result nil]
-    (if (seq ikeys)
-      (recur (rest ikeys)
-             (let [candidates (map (first ikeys) dicts)]
-               (if (nil?  result)
-                 (apply min candidates)
-                 (apply min (conj candidates result)))))
-      result)))
-
 (defn svg-did-mount [node ratom]
   "Mount function for svg component."
   (-> node
@@ -88,8 +58,8 @@
   "Creates y-scale for plotting given computations."
   (-> js/d3
       .scaleLinear
-      (.domain #js [(find-min-value keys computations)
-                    (find-max-value keys computations)])
+      (.domain #js [(u/find-min-value keys computations)
+                    (u/find-max-value keys computations)])
       (.range #js [CHART-HEIGHT 0])))
 
 (defn x-axis [keys node ratom]
@@ -105,7 +75,7 @@
 
 (defn y-axis [keys node ratom]
   "Builds y-axis."
-  (let [computations (filter-positive-values @ratom keys)
+  (let [computations (u/filter-positive-values @ratom keys)
         y-scale (create-y-scale keys computations)]
     (-> node
         (.call (-> (.axisLeft js/d3 y-scale)
@@ -131,14 +101,6 @@
       (.attr "fill" "#5D6971")
       (.text text)))
 
-(defn positive-or-zero [n]
-  "Returns N if it is non-negative, else returns 0."
-  (if (neg? n) 0 n))
-
-(defn zero-if-nan [n]
-  "Returns N if it is a number, else returns 0."
-  (if (js/isNaN n) 0 n))
-
 (defn bars [keys key node ratom]
   "Builds SVG bars."
   (let [config (get-config)
@@ -146,7 +108,7 @@
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
                                     config)
         computations @ratom
-        positive-computations (filter-positive-values computations keys)
+        positive-computations (u/filter-positive-values computations keys)
         x-scale (create-x-scale computations)
         y-scale (create-y-scale keys positive-computations)]
     (-> node
@@ -160,10 +122,10 @@
                                RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR
                                :else nil))))
         (.attr "x" (fn [d] (x-scale (+ (key BAR-OFFSETS) (aget d "year")))))
-        (.attr "y" (fn [d] (zero-if-nan (y-scale (positive-or-zero (aget d (name key)))))))
-        (.attr "height" (fn [d] (positive-or-zero
-                                 (zero-if-nan (- CHART-HEIGHT
-                                                 (y-scale (positive-or-zero (aget d (name key)))))))))
+        (.attr "y" (fn [d] (u/zero-if-nan (y-scale (u/positive-or-zero (aget d (name key)))))))
+        (.attr "height" (fn [d] (u/positive-or-zero
+                                 (u/zero-if-nan (- CHART-HEIGHT
+                                                   (y-scale (u/positive-or-zero (aget d (name key)))))))))
         (.attr "width" CHART-BAR-WIDTH)
         (.on "click" (fn [d]
                        (let [year (aget d "year")
