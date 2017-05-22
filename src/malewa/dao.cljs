@@ -4,6 +4,7 @@
             [malewa.utils :as u]))
 
 (def MAX-VALID-TARGET-RETIREMENT-YEAR 50)
+(def MAX-ALLOWED-VALUE 1000000000000000)
 
 (defn describe-config-key [key]
   "Gets description for a configuration key."
@@ -87,8 +88,12 @@
   "Gets the first configuration error found."
   (let [config (get-config)
         invalid-value-key (some #(when (js/isNaN (u/float-value-by-id (name %))) %) (keys config))
+        too-big-value-key (some #(when (< MAX-ALLOWED-VALUE
+                                          (u/abs (u/float-value-by-id (name %)))) %) (keys config))
+        inv (:current-balance config)
         yob (:birth-year config)]
     (cond
       invalid-value-key (str (describe-config-key invalid-value-key) " must be a number.")
+      too-big-value-key (str (describe-config-key too-big-value-key) " is extremely large.")
       (not (and (> yob 1900) (< yob (u/current-year)))) "Invalid value for Birth Year."
       :else nil)))

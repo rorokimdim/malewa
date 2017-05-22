@@ -6,11 +6,24 @@
   "Gets current year."
   (t/year (t/now)))
 
-(defn format-with-commas [n]
+(defn format-number-with-commas [n]
   "Formats number N with commas."
   (p/cl-format nil "~:d" n))
 
-(defn format-as-pct [n]
+(defn format-number-as-abbreviated [n]
+  "Formats number as abbreviated string such as 1K, 10M."
+  (let [thousands (/ n 1000)
+        millions (/ thousands 1000)
+        billions (/ millions 1000 )
+        trillions (/ billions 1000)]
+    (cond
+      (>= trillions 1) (str trillions "T")
+      (>= billions 1) (str billions "B")
+      (>= millions 1) (str millions "M")
+      (>= thousands 1) (str thousands "K")
+      :else (str n))))
+
+(defn format-number-as-pct [n]
   "Formats number representing a percentage."
   (p/cl-format nil "~,2f %" (* 100.0 n)))
 
@@ -60,3 +73,7 @@
 (defn zero-if-nan [n]
   "Returns N if it is a number, else returns 0."
   (if (js/isNaN n) 0 n))
+
+(defn abs [n]
+  "Returns absolute value of a number."
+  (if (neg? n) (* -1 n) n))

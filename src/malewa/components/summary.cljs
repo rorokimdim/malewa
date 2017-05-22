@@ -17,29 +17,29 @@
     [:div
      [:p "You plan to retire in " target-year " years."
       " You expect your expenses to be less than "
-      (u/format-with-commas (js/parseInt (:expenses-per-year-during-retirement config)))
+      (u/format-number-with-commas (js/parseInt (:expenses-per-year-during-retirement config)))
       " per year."]
      [:p "You currently have "
-      (u/format-with-commas (js/parseInt (:current-balance config)))
+      (u/format-number-with-commas (js/parseInt (:current-balance config)))
       " invested in non-retirement accounts, and "
-      (u/format-with-commas (js/parseInt (:retirement-account-current-balance config)))
+      (u/format-number-with-commas (js/parseInt (:retirement-account-current-balance config)))
       " in retirement accounts, both earning about "
-      (u/format-as-pct (:interest-per-year config))
+      (u/format-number-as-pct (:interest-per-year config))
       " interest per year. If you cash out your retirement accounts before "
       (f/retirement-account-early-withdrawal-penalty-tax-years config)
       " years, you will incur a 10 % penalty tax (in addition to income-tax on"
       " any non-roth retirement accounts)."]
      (if broke-year-c
        [:p "At the time you retire, you will have "
-        (u/format-with-commas (js/parseInt balance-at-retirement))
+        (u/format-number-with-commas (js/parseInt balance-at-retirement))
         ". That will last you till year "
         (dec (:year broke-year-c))
         ", when you will be " (+ (:year broke-year-c) (- (u/current-year) (:birth-year config)))
         " years old. After that you will have to cash our your retirement account balance ("
         (let [pre-tax (:retirement-account-balance-pre-tax before-broke-year-c)
               post-tax (:retirement-account-balance-post-tax before-broke-year-c)]
-          (str "pre/post tax: " (u/format-with-commas (js/parseInt pre-tax))
-               " / " (u/format-with-commas (js/parseInt post-tax))))
+          (str "pre/post tax: " (u/format-number-with-commas (js/parseInt pre-tax))
+               " / " (u/format-number-with-commas (js/parseInt post-tax))))
         ")."
         ]
        [:p "Congratulations! You will have enough money to last forever!"

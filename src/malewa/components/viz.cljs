@@ -2,7 +2,8 @@
   (:require [rid3.core :as d3]
             [malewa.utils :as u]
             [malewa.finance :as f]
-            [malewa.dao :refer [get-config get-window-width get-window-height reset-selected-value!]]))
+            [malewa.dao :refer [get-config get-window-width get-window-height
+                                reset-selected-value!]]))
 
 (def BAR-COLORS {:balance "#31a354"
                  :retirement-account-balance-pre-tax "#316395"
@@ -80,11 +81,7 @@
     (-> node
         (.call (-> (.axisLeft js/d3 y-scale)
                    (.ticks 5)
-                   (.tickFormat (fn [d]
-                                  (let [thousands (/ d 1000)
-                                        millions (/ d 1000000)]
-                                    (if (>= millions 1) (str millions "M")
-                                        (str thousands "K")))))
+                   (.tickFormat u/format-number-as-abbreviated)
                    (.tickSizeInner #js [(- 5)]))))
     (-> node
         (.select "path")
@@ -130,7 +127,7 @@
         (.on "click" (fn [d]
                        (let [year (aget d "year")
                              value (aget d (name key))
-                             formatted-value (u/format-with-commas (js/parseInt value))]
+                             formatted-value (u/format-number-with-commas (js/parseInt value))]
                          (reset-selected-value! (str "Year " year ": " formatted-value))
                          (-> (js/d3.select "#selected")
                              (.style "left" (str (- js/d3.event.pageX 50) "px"))
@@ -145,8 +142,7 @@
                             (-> (js/d3.select this)
                                 (.style "fill" (key BAR-COLORS))))
                           (-> (js/d3.select "#selected") (.style "display" "none"))
-                          (reset-selected-value! nil)))
-        )))
+                          (reset-selected-value! nil))))))
 
 (defn viz-comp [keys label ratom]
   "Builds visualization component for values of given KEYS."
@@ -158,7 +154,7 @@
           :did-update svg-did-update}
     :main-container {:did-mount main-container-did-mount}
     :pieces (concat [{:kind :container
-                      :class "x-axis"
+                      :class "axis"
                       :children
                       [{:kind :container
                         :class  "x-axis"
