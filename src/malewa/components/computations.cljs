@@ -9,8 +9,8 @@
     [:table.computations
      [:thead>tr
       [:th "Year"]
-      [:th.currency "Investment"]
-      [:th.currency "Balance"]
+      [:th.currency "Investment (by end of year)"]
+      [:th.currency "Balance (at start of the year)"]
       [:th.currency "Retirement Expense + tax"]
       [:th.currency "Retirement Acc. Investment"]
       [:th.currency "Retirement Acc. Balance (pre/post tax)"]]
