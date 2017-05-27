@@ -11,11 +11,13 @@
 (def BAR-OFFSETS {:balance 0
                   :retirement-account-balance-pre-tax -0.25
                   :retirement-account-balance-post-tax 0.25})
+(def BAR-STROKE-WIDTH 2)
 
+(def BROKE-YEAR-STROKE-COLOR "red")
 (def TARGET-YEAR-STROKE-COLOR "black")
 (def RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR "blue")
 
-(def CHART-BAR-WIDTH 10)
+(def CHART-BAR-WIDTH 8)
 (def CHART-HEIGHT 200)
 (def CHART-PADDING-HEIGHT 50)
 (def CHART-PADDING-WIDTH 80)
@@ -105,6 +107,8 @@
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
                                     config)
         computations @ratom
+        expenses-per-year (:expenses-per-year-during-retirement config)
+        broke-year-c (f/get-broke-year-computation config computations)
         positive-computations (u/filter-positive-values computations keys)
         x-scale (create-x-scale computations)
         y-scale (create-y-scale keys positive-computations)]
@@ -117,7 +121,10 @@
                                (= year target-year) TARGET-YEAR-STROKE-COLOR
                                (= year retirement-withdrawal-year)
                                RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR
+                               (and (not (nil? broke-year-c))
+                                    (= year (:year broke-year-c))) BROKE-YEAR-STROKE-COLOR
                                :else nil))))
+        (.style "stroke-width" BAR-STROKE-WIDTH)
         (.attr "x" (fn [d] (x-scale (+ (key BAR-OFFSETS) (aget d "year")))))
         (.attr "y" (fn [d] (u/zero-if-nan (y-scale (u/positive-or-zero (aget d (name key)))))))
         (.attr "height" (fn [d] (u/positive-or-zero

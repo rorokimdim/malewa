@@ -73,3 +73,13 @@
          :retirement-account-investment (retirement-account-investment config y)
          :retirement-account-balance-pre-tax retirement-account-balance-pre-tax
          :retirement-account-balance-post-tax retirement-account-balance-post-tax}))))
+
+
+(defn get-broke-year-computation [config computations]
+  "Gets computation record for year when there is insufficient funds
+   to cover expenses."
+  (let [target-year (:target-retirement-after-years config)
+        expenses-per-year (:expenses-per-year-during-retirement config)]
+    (some #(when (and
+                  (<= target-year (:year %))
+                  (>= expenses-per-year (:balance %))) %) computations)))

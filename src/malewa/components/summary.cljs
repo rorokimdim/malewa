@@ -9,11 +9,7 @@
         target-year (:target-retirement-after-years config)
         balance-at-retirement (:balance (nth computations target-year))
         expenses-per-year (:expenses-per-year-during-retirement config)
-        broke-year-c (some #(when (and
-                                   (<= target-year (:year %))
-                                   (>= expenses-per-year (:balance %))) %) computations)
-        before-broke-year (max (if broke-year-c (dec (:year broke-year-c)) 0) 0)
-        before-broke-year-c (nth computations before-broke-year)]
+        broke-year-c (f/get-broke-year-computation config computations)]
     [:div
      [:p "You plan to retire in " target-year " years."
       " You expect your expenses to be less than "
@@ -36,8 +32,8 @@
         (dec (:year broke-year-c))
         ", when you will be " (+ (:year broke-year-c) (- (u/current-year) (:birth-year config)))
         " years old. After that you will have to cash our your retirement account balance ("
-        (let [pre-tax (:retirement-account-balance-pre-tax before-broke-year-c)
-              post-tax (:retirement-account-balance-post-tax before-broke-year-c)]
+        (let [pre-tax (:retirement-account-balance-pre-tax broke-year-c)
+              post-tax (:retirement-account-balance-post-tax broke-year-c)]
           (str "pre/post tax: " (u/format-number-with-commas (js/parseInt pre-tax))
                " / " (u/format-number-with-commas (js/parseInt post-tax))))
         ")."
@@ -49,5 +45,6 @@
       " Similarly, the second chart shows your balance in retirement accounts; blue is pre-tax balance, orange is post-tax balance."
       " Years without any bars imply that you have run out of money."
       " The bar highlighted in black indicates the year you plan to retire."
-      " The bar highlighted in blue indicates the year you can withdraw from your retirement accounts without penalty."]
+      " The bar highlighted in blue indicates the year you can withdraw from your retirement accounts without penalty."
+      " The bar highlighted in red indicates the year when you have insufficient funds and will need to cash your retirement accounts."]
      ]))

@@ -2,6 +2,10 @@ p.error {
   color: red;
 }
 
+p.small {
+  font-size: 12px;
+}
+
 table.config td.value {
   text-align: right;
 }
