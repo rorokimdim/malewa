@@ -9,34 +9,33 @@
     [:div
      [:p.small "* By end of year"
       [:br] "** At start of year"]
-     [:table.computations
-      [:thead>tr
-       [:th "Year"]
-       [:th.currency "Investment" [:sup "*"]]
-       [:th.currency "Balance" [:sup "**"]]
-       [:th.currency "Retirement Expense + tax"]
-       [:th.currency "Retirement Acc. Investment" [:sup "*"]]
-       [:th.currency "Retirement Acc. Balance (pre/post tax)" [:sup "**"]]]
-      [:tbody
-       (doall
-        (for [c computations]
-          ^{:key (:year c)}
-          [:tr {:class (if (= (:year c)
+     [:div.table.computations
+      [:div.row.header.blue
+       [:div.cell.right "Year"]
+       [:div.cell.currency "Investment" [:sup "*"]]
+       [:div.cell.currency "Balance" [:sup "**"]]
+       [:div.cell.currency "Retirement Expense + tax"]
+       [:div.cell.currency "Retirement Acc. Investment" [:sup "*"]]
+       [:div.cell.currency "Retirement Acc. Balance (pre/post tax)" [:sup "**"]]]
+      (doall
+       (for [c computations]
+         ^{:key (:year c)}
+         [:div {:class (if (= (:year c)
                               (f/retirement-account-early-withdrawal-penalty-tax-years config))
-                         "highlighted" "regular")}
-           [:td (:year c)]
-           [:td.currency (u/format-number-with-commas (js/parseInt (:investment c)))]
-           (let [b (js/parseInt (:balance c))
-                 bf (u/format-number-with-commas b)]
-             (if (< b 0)
-               [:td.currency.negative bf]
-               [:td.currency bf]))
-           [:td.currency (u/format-number-with-commas (js/parseInt (:expense c)))]
-           [:td.currency (u/format-number-with-commas
-                          (js/parseInt (:retirement-account-investment c)))]
-           [:td.currency
-            (u/format-number-with-commas
-             (js/parseInt (:retirement-account-balance-pre-tax c)))
-            " / "
-            (u/format-number-with-commas
-             (js/parseInt (:retirement-account-balance-post-tax c)))]]))]]]))
+                         "row highlighted" "row regular")}
+          [:div.cell.right (:year c)]
+          [:div.cell.currency (u/format-number-with-commas (js/parseInt (:investment c)))]
+          (let [b (js/parseInt (:balance c))
+                bf (u/format-number-with-commas b)]
+            (if (< b 0)
+              [:div.cell.currency.negative bf]
+              [:div.cell.currency bf]))
+          [:div.cell.currency (u/format-number-with-commas (js/parseInt (:expense c)))]
+          [:div.cell.currency (u/format-number-with-commas
+                               (js/parseInt (:retirement-account-investment c)))]
+          [:div.cell.currency
+           (u/format-number-with-commas
+            (js/parseInt (:retirement-account-balance-pre-tax c)))
+           " / "
+           (u/format-number-with-commas
+            (js/parseInt (:retirement-account-balance-post-tax c)))]]))]]))

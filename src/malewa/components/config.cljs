@@ -54,52 +54,59 @@
                :value "RESET"
                :on-click #(do (reset-config!)
                               (.reload (.-location js/window)))}]]
-     [:table.config
-      [:tbody
-       [:tr [:td.title {:colSpan "2"} "Non-retirement-account Investment"]]
-       [:tr
-        [:td "Current investment balance"]
-        [:td.value [config-text-input-comp :current-balance]]]
-       [:tr
-        [:td "Investment per year"]
-        [:td.value [config-text-input-comp :investment-per-year]]]
-       [:tr [:td.title {:colSpan "2"} "Retirement Account Investments (401Ks, Traditional IRAs)"]]
-       [:tr
-        [:td "Current investment balance"]
-        [:td.value [config-text-input-comp :retirement-account-current-balance]]]
-       [:tr
-        [:td "Investment per year"]
-        [:td.value [config-text-input-comp :retirement-account-investment-per-year]]]
-       [:tr
-        [:td "Tax at withdrawal"]
-        [:td.value [config-text-input-comp :retirement-account-tax-at-withdrawal]]]
-       [:tr
-        [:td "Penalty tax at early withdrawal"]
-        [:td.value [config-text-input-comp :retirement-account-penalty-tax-at-early-withdrawal]]]
-       [:tr
-        [:td "Birth Year (to determine when penalty tax applies)"]
-        [:td.value [config-text-input-comp :birth-year]]]
-       [:tr [:td.title {:colSpan "2"} "Earnings from investments"]]
-       [:tr
-        [:td "Interest on investments per year"]
-        [:td.value [config-text-input-comp :interest-per-year]]]
-       [:tr
-        [:td "Long term capital gain tax on selling investments"]
-        [:td.value [config-text-input-comp :long-term-capital-gain-tax]]]
-       [:tr [:td.title {:colSpan "2"} "Retirement Goals"]]
-       [:tr
-        [:td "Expenses per year during retirement"]
-        [:td.value [config-text-input-comp :expenses-per-year-during-retirement]]]
-       [:tr
-        [:td
-         [:span {:style {:padding-right "15px"}} "Target retirement after"]
-         [config-slider-input-comp :target-retirement-after-years 0
-          MAX-VALID-TARGET-RETIREMENT-YEAR]]
-        [:td.value
-         [:input {:type "button" :value "←"
-                  :on-click (partial dec-key! :target-retirement-after-years 0)}]
-         [:span {:style {:font-size 14 :display "inline-block" :margin "5px"}}
-          (:target-retirement-after-years config) " Years"]
-         [:input {:type "button" :value "→"
-                  :on-click (partial inc-key! :target-retirement-after-years
-                                     MAX-VALID-TARGET-RETIREMENT-YEAR)}]]]]]]))
+     [:div {:class "table config"}
+      [:div.row.header.blue
+       [:div.cell.title "Non-retirement-account Investment"]
+       [:div.cell.title]]
+      [:div.row
+       [:div.cell "Current investment balance"]
+       [:div.cell.value [config-text-input-comp :current-balance]]]
+      [:div.row
+       [:div.cell "Investment per year"]
+       [:div.cell.value [config-text-input-comp :investment-per-year]]]
+      [:div {:class "row header blue"}
+       [:div.cell.title "Retirement Account Investments" [:span.small " (401Ks, Traditional IRAs)"]]
+       [:div.cell.title]]
+      [:div.row
+       [:div.cell "Current investment balance"]
+       [:div.cell.value [config-text-input-comp :retirement-account-current-balance]]]
+      [:div.row
+       [:div.cell "Investment per year"]
+       [:div.cell.value [config-text-input-comp :retirement-account-investment-per-year]]]
+      [:div.row
+       [:div.cell "Tax at withdrawal"]
+       [:div.cell.value [config-text-input-comp :retirement-account-tax-at-withdrawal]]]
+      [:div.row
+       [:div.cell "Penalty tax at early withdrawal"]
+       [:div.cell.value [config-text-input-comp :retirement-account-penalty-tax-at-early-withdrawal]]]
+      [:div.row
+       [:div.cell "Birth Year (determines when penalty tax applies)"]
+       [:div.cell.value [config-text-input-comp :birth-year]]]
+      [:div {:class "row header blue"}
+       [:div.cell.title "Earnings from investments"]
+       [:div.cell.title]]
+      [:div.row
+       [:div.cell "Interest on investments per year"]
+       [:div.cell.value [config-text-input-comp :interest-per-year]]]
+      [:div.row
+       [:div.cell "Long term capital gain tax on selling investments"]
+       [:div.cell.value [config-text-input-comp :long-term-capital-gain-tax]]]
+      [:div {:class "row header blue"}
+       [:div.cell.title "Retirement Goals"]
+       [:div.cell.title]]
+      [:div.row
+       [:div.cell "Expenses per year during retirement"]
+       [:div.cell.value [config-text-input-comp :expenses-per-year-during-retirement]]]
+      [:div.row
+       [:div.cell
+        [:span {:style {:padding-right "15px"}} "Target retirement after"]
+        [config-slider-input-comp :target-retirement-after-years 0
+         MAX-VALID-TARGET-RETIREMENT-YEAR]]
+       [:div.cell.value
+        [:input {:type "button" :value "←"
+                 :on-click (partial dec-key! :target-retirement-after-years 0)}]
+        [:span {:style {:font-size 14 :display "inline-block" :margin "5px"}}
+         (:target-retirement-after-years config) " Years"]
+        [:input {:type "button" :value "→"
+                 :on-click (partial inc-key! :target-retirement-after-years
+                                    MAX-VALID-TARGET-RETIREMENT-YEAR)}]]]]]))

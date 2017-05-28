@@ -1,40 +1,45 @@
-p.error {
+.error {
   color: red;
 }
 
-p.small {
+.small {
   font-size: 12px;
 }
 
-table.config td.value {
+.selected {
+  text-align: center;
+  font-size: 14;
+  position: absolute;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  display: none;
+  padding: 14px;
+  font-family: sans-serif;
+  color: #5D6971;
+}
+
+h3 {
+  margin: 1em 0 0.5em 0;
+  font-weight: 600;
+  font-family: sans-serif;
+  position: relative;
+  font-size: 14px;
+  line-height: 40px;
+  color: #2980b9;
+  text-transform: uppercase;
+}
+
+.config {
+  max-width: 500px;
+}
+
+.config .cell .value {
   text-align: right;
 }
 
-table.config td.title {
+.config .title {
   text-align: left;
-  font-size: 16px;
+  font-size: 14px;
   padding: 5px;
-  background-color: #e4eef0;
-  border-left: 2px solid #feb440;
-}
-
-table.computations {
-  border-collapse: collapse;
-}
-
-table.computations th, table.computations td {
-  border: 1px solid #aaaaaa;
-  padding: 5px;
-}
-
-table.computations td.currency, th.currency {
-  text-align: right;
-}
-
-table.computations td.currency.negative {
-  color: red;
-}
-
-table.computations tr.highlighted {
-  background-color: #e4eef0;
 }
