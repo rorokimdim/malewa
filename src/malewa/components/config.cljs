@@ -101,7 +101,7 @@
        [:div.cell
         [:span {:style {:padding-right "15px"}} "Target retirement after"]
         [config-slider-input-comp :target-retirement-after-years 0
-         MAX-VALID-TARGET-RETIREMENT-YEAR]]
+         (dec MAX-VALID-TARGET-RETIREMENT-YEAR)]]
        [:div.cell.value
         [:input {:type "button" :value "←"
                  :on-click (partial dec-key! :target-retirement-after-years 0)}]
@@ -109,4 +109,4 @@
          (:target-retirement-after-years config) " Years"]
         [:input {:type "button" :value "→"
                  :on-click (partial inc-key! :target-retirement-after-years
-                                    MAX-VALID-TARGET-RETIREMENT-YEAR)}]]]]]))
+                                    (dec MAX-VALID-TARGET-RETIREMENT-YEAR))}]]]]]))

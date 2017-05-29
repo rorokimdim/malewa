@@ -107,7 +107,7 @@
 (defn bars [keys key node ratom]
   "Builds SVG bars."
   (let [config (get-config)
-        target-year (:target-retirement-after-years config)
+        target-year (inc (:target-retirement-after-years config))
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
                                     config)
         computations @ratom
