@@ -2,7 +2,7 @@
   (:require [malewa.utils :as u]))
 
 (defn expense [config n]
-  "Computes expense of Nth year."
+  "Computes expense at start of Nth year."
   (let [target (:target-retirement-after-years config)
         capital-gain-tax (:long-term-capital-gain-tax config)
         expense-per-year (:expenses-per-year-during-retirement config)]
@@ -11,26 +11,26 @@
       0)))
 
 (defn investment [config n]
-  "Computes investment for Nth year in non-retirement accounts."
+  "Computes investment by end of Nth year in non-retirement accounts."
   (let [target (:target-retirement-after-years config)
         inv (:investment-per-year config)]
     (if (> n target) 0 inv)))
 
 (defn retirement-account-investment [config n]
-  "Computes investment for Nth year in retirement accounts."
+  "Computes investment by end of Nth year in retirement accounts."
   (let [target (:target-retirement-after-years config)
         inv (:retirement-account-investment-per-year config)]
     (if (> n target) 0 inv)))
 
 (defn balance [config n f]
-  "Computes balance in Nth year."
+  "Computes balance at start of Nth year."
   (let [current-balance (:current-balance config)
         i (:interest-per-year config)]
     (if (= n 0)
       current-balance
       (-> (f config (dec n) f)
           (* (+ 1 i))
-          (+ (investment config n))
+          (+ (investment config (dec n)))
           (- (expense config n))))))
 
 (defn retirement-account-early-withdrawal-penalty-tax-years [config]
@@ -51,7 +51,7 @@
       (let [pre-tax (-> (f config (dec n) f)
                         first
                         (* (+ 1 i))
-                        (+ (retirement-account-investment config n)))
+                        (+ (retirement-account-investment config (dec n))))
             post-tax (* (- 1 tax) pre-tax)]
         [pre-tax post-tax]))))
 

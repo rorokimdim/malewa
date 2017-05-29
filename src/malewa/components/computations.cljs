@@ -7,16 +7,16 @@
   "Builds computations component."
   (let [config (get-config)]
     [:div
-     [:p.small "* By end of year"
-      [:br] "** At start of year"]
+     [:p.small "* At start of year"
+      [:br] "** By end of year"]
      [:div.table.computations
       [:div.row.header.blue
        [:div.cell.right "Year"]
-       [:div.cell.currency "Investment" [:sup "*"]]
-       [:div.cell.currency "Balance" [:sup "**"]]
-       [:div.cell.currency "Retirement Expense + tax"]
-       [:div.cell.currency "Retirement Acc. Investment" [:sup "*"]]
-       [:div.cell.currency "Retirement Acc. Balance (pre/post tax)" [:sup "**"]]]
+       [:div.cell.currency "Investment" [:sup "**"]]
+       [:div.cell.currency "Balance (after expenses)" [:sup "*"]]
+       [:div.cell.currency "Retirement Expense + tax" [:sup "*"]]
+       [:div.cell.currency "Retirement Acc. Investment" [:sup "**"]]
+       [:div.cell.currency "Retirement Acc. Balance (pre/post tax)" [:sup "*"]]]
       (doall
        (for [c computations]
          ^{:key (:year c)}
@@ -27,7 +27,7 @@
           [:div.cell.currency (u/format-number-with-commas (js/parseInt (:investment c)))]
           (let [b (js/parseInt (:balance c))
                 bf (u/format-number-with-commas b)]
-            (if (< b 0)
+            (if (< b (:expense c))
               [:div.cell.currency.negative bf]
               [:div.cell.currency bf]))
           [:div.cell.currency (u/format-number-with-commas (js/parseInt (:expense c)))]
