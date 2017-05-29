@@ -17,7 +17,7 @@
 (def TARGET-YEAR-STROKE-COLOR "black")
 (def RETIREMENT-WITHDRAWAL-YEAR-STROKE-COLOR "blue")
 
-(def CHART-BAR-WIDTH 8)
+(def MAX-CHART-BAR-WIDTH 8)
 (def CHART-HEIGHT 200)
 (def CHART-PADDING-HEIGHT 50)
 (def CHART-PADDING-WIDTH 80)
@@ -28,6 +28,10 @@
 (defn chart-width []
   "Gets chart width."
   (* CHART-WIDTH-PCT (get-window-width)))
+
+(defn chart-bar-width []
+  "Gets with of each bar for bar charts."
+  (min MAX-CHART-BAR-WIDTH (/ (chart-width) 100)))
 
 (defn svg-width []
   "Gets SVG width."
@@ -70,7 +74,7 @@
   (let [computations @ratom
         x-scale (create-x-scale computations)]
     (-> node
-        (.attr "transform" (str "translate(" (/ CHART-BAR-WIDTH 2) "," CHART-HEIGHT ")"))
+        (.attr "transform" (str "translate(" (/ (chart-bar-width) 2) "," CHART-HEIGHT ")"))
         (.call (.axisBottom js/d3 x-scale)))
     (-> node
         (.select "path")
@@ -130,7 +134,7 @@
         (.attr "height" (fn [d] (u/positive-or-zero
                                  (u/zero-if-nan (- CHART-HEIGHT
                                                    (y-scale (u/positive-or-zero (aget d (name key)))))))))
-        (.attr "width" CHART-BAR-WIDTH)
+        (.attr "width" (chart-bar-width))
         (.on "click" (fn [d]
                        (let [year (aget d "year")
                              value (aget d (name key))
