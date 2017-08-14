@@ -38,7 +38,9 @@
                " / " (u/format-number-with-commas (js/parseInt post-tax))))
         ")."
         ]
-       [:p "Congratulations! You will have enough money to last forever!"
+       [:p "Congratulations! At the time you retire, you will have "
+        (u/format-number-with-commas (js/parseInt balance-at-retirement))
+        ". That is enough money to last forever!"
         " You should retire earlier or live more lavishly during retirement!"])
      [:p
       "The first chart below shows your balance in non-retirement accounts over years; starting with 0, the current year."
