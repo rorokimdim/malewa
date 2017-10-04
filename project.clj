@@ -106,7 +106,7 @@
                    ;; need to add dev source path here to get user.clj loaded
                    :source-paths ["src" "dev"]
                    ;; for CIDER
-                   :plugins [[cider/cider-nrepl "0.15.0-snapshot"]]
+                   :plugins [[cider/cider-nrepl "0.15.1"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    ;; need to add the compliled assets to the :clean-targets
                    :clean-targets ^{:protect false} ["resources/dev/js/compiled"
