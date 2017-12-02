@@ -25,52 +25,61 @@
 
 (def SVG-HEIGHT (+ CHART-HEIGHT CHART-PADDING-HEIGHT))
 
-(defn chart-width []
+(defn chart-width
   "Gets chart width."
+  []
   (* CHART-WIDTH-PCT (get-window-width)))
 
-(defn chart-bar-width []
+(defn chart-bar-width
   "Gets with of each bar for bar charts."
+  []
   (min MAX-CHART-BAR-WIDTH (/ (chart-width) 100)))
 
-(defn svg-width []
+(defn svg-width
   "Gets SVG width."
+  []
   (+ (chart-width) CHART-PADDING-WIDTH))
 
-(defn svg-did-mount [node ratom]
+(defn svg-did-mount
   "Mount function for svg component."
+  [node ratom]
   (-> node
       (.attr "width" (svg-width))
       (.attr "height" SVG-HEIGHT)))
 
-(defn svg-did-update [node ratom]
+(defn svg-did-update
   "Update function for svg component."
+  [node ratom]
   (-> node
       (.attr "width" (svg-width))
       (.attr "height" SVG-HEIGHT)))
 
-(defn main-container-did-mount [node ratom]
+(defn main-container-did-mount
   "Mount function for main-container."
+  [node ratom]
   (-> node
       (.attr "transform" "translate(50, 0)")))
 
-(defn create-x-scale [computations]
+(defn create-x-scale
   "Creates x-scale for plotting given computations."
+  [computations]
   (-> js/d3
       .scaleLinear
       (.domain #js [0 (count computations)])
       (.range #js [0 (chart-width)])))
 
-(defn create-y-scale [keys computations]
+(defn create-y-scale
   "Creates y-scale for plotting given computations."
+  [keys computations]
   (-> js/d3
       .scaleLinear
       (.domain #js [(u/find-min-value keys computations)
                     (u/find-max-value keys computations)])
       (.range #js [CHART-HEIGHT 0])))
 
-(defn x-axis [keys node ratom]
+(defn x-axis
   "Builds x-axis."
+  [keys node ratom]
   (let [computations @ratom
         x-scale (create-x-scale computations)]
     (-> node
@@ -80,8 +89,9 @@
         (.select "path")
         (.style "stroke" "none"))))
 
-(defn y-axis [keys node ratom]
+(defn y-axis
   "Builds y-axis."
+  [keys node ratom]
   (let [computations (u/filter-positive-values @ratom keys)
         y-scale (create-y-scale keys computations)]
     (-> node
@@ -93,8 +103,9 @@
         (.select "path")
         (.style "stroke" "none"))))
 
-(defn chart-label [text node ratom]
+(defn chart-label
   "Builds a label with TEXT."
+  [text node ratom]
   (-> node
       (.attr "x" (/ (chart-width) 2))
       (.attr "y" (- SVG-HEIGHT 10))
@@ -104,8 +115,9 @@
       (.attr "fill" "#5D6971")
       (.text text)))
 
-(defn bars [keys key node ratom]
+(defn bars
   "Builds SVG bars."
+  [keys key node ratom]
   (let [config (get-config)
         target-year (inc (:target-retirement-after-years config))
         retirement-withdrawal-year (f/retirement-account-early-withdrawal-penalty-tax-years
@@ -155,8 +167,9 @@
                           (-> (js/d3.select "#selected") (.style "display" "none"))
                           (reset-selected-value! nil))))))
 
-(defn viz-comp [keys label ratom]
+(defn viz-comp
   "Builds visualization component for values of given KEYS."
+  [keys label ratom]
   (chart-width) ;; Hack to update this component when window is resized
   [d3/viz
    {:id (apply str (map name keys))

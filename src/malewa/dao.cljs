@@ -6,8 +6,9 @@
 (def MAX-VALID-TARGET-RETIREMENT-YEAR 50)
 (def MAX-ALLOWED-VALUE 1000000000000000)
 
-(defn describe-config-key [key]
+(defn describe-config-key
   "Gets description for a configuration key."
+  [key]
   (case key
     :birth-year "Birth Year"
     :current-balance "Non-retirement - Current investment balance"
@@ -47,45 +48,54 @@
    {:width (.-innerWidth js/window)}
    {:height (.-innerHeight js/window)}))
 
-(defn get-config []
+(defn get-config
   "Gets current configuration."
+  []
   (:config @APP-STATE))
 
-(defn get-window-width []
+(defn get-window-width
   "Gets current window width."
+  []
   (:width @WINDOW-DIMS))
 
-(defn get-window-height []
+(defn get-window-height
   "Gets current window height."
+  []
   (:height @WINDOW-DIMS))
 
-(defn reset-computations! [computations]
+(defn reset-computations!
   "Resets computations to new value."
+  [computations]
   (reset! COMPUTATIONS computations))
 
 (defn reset-validation! [flag]
   (reset! VALIDATION (+ @VALIDATION flag)))
 
-(defn reset-selected-value! [v]
+(defn reset-selected-value!
   "Updates SELECTED-VALUE atom to V."
+  [v]
   (reset! SELECTED-VALUE v))
 
-(defn update-window-dims! []
+(defn update-window-dims!
   "Updates window dimensions to current window dimensions."
+  []
   (reset! WINDOW-DIMS
           {:width (.-innerWidth js/window)}
           {:height (.-innerHeight js/window)}))
 
-(defn update-config! [key value]
+(defn update-config!
   "Updates configuration for KEY with VALUE."
+  [key value]
   (swap! APP-STATE assoc-in [:config key] value))
 
-(defn reset-config! []
+(defn reset-config!
   "Resets configuration to default values."
+  []
   (ls/clear-local-storage!))
 
-(defn get-validation-error []
+(defn get-validation-error
   "Gets the first configuration error found."
+  []
   (let [config (get-config)
         invalid-value-key (some #(when (js/isNaN (u/float-value-by-id (name %))) %) (keys config))
         too-big-value-key (some #(when (< MAX-ALLOWED-VALUE

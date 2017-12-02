@@ -12,8 +12,9 @@
                                 get-validation-error
                                 reset-computations!]]))
 
-(defn root-comp []
+(defn root-comp
   "Builds root component."
+  []
   @VALIDATION ;; Force data re-validation if this flag changes
   (let [config (get-config)]
     [:div

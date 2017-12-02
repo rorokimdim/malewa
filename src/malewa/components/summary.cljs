@@ -3,8 +3,9 @@
             [malewa.finance :as f]
             [malewa.dao :refer [get-config]]))
 
-(defn summary-comp [computations]
+(defn summary-comp
   "Builds summary component."
+  [computations]
   (let [config (get-config)
         target-year (inc (:target-retirement-after-years config))
         balance-at-retirement (:balance (nth computations target-year))

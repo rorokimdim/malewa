@@ -2,8 +2,9 @@
   (:require [malewa.dao :refer [MAX-VALID-TARGET-RETIREMENT-YEAR
                                 get-config reset-config! update-config! reset-validation!]]))
 
-(defn update-config-on-change [key event]
+(defn update-config-on-change
   "Updates state variable for KEY on EVENT."
+  [key event]
   (let [value (-> event
                   .-target
                   .-value)
@@ -12,30 +13,34 @@
       (update-config! key float-value)
       (reset-validation! 1))))
 
-(defn inc-key! [key maximum event]
+(defn inc-key!
   "Increments value of a key by 1."
+  [key maximum event]
   (let [c (get-config)
         current-target (key c)]
     (when (< current-target maximum)
       (update-config! key (inc current-target)))))
 
-(defn dec-key! [key minimum event]
+(defn dec-key!
   "Decrements value of a key by 1 if value is > minimum."
+  [key minimum event]
   (let [c (get-config)
         current-target (key c)]
     (when (> current-target minimum)
       (update-config! key (dec current-target)))))
 
-(defn config-text-input-comp [key]
+(defn config-text-input-comp
   "Builds a text input component."
+  [key]
   [:input {:type "text"
            :id key
            :style {:text-align "right"}
            :default-value (key (get-config))
            :on-change (partial update-config-on-change key)}])
 
-(defn config-slider-input-comp [key min max]
+(defn config-slider-input-comp
   "Builds a slider input component."
+  [key min max]
   [:input {:type "range"
            :id key
            :value (key (get-config))
@@ -43,8 +48,9 @@
            :max max
            :on-change (partial update-config-on-change key)}])
 
-(defn config-comp []
+(defn config-comp
   "Builds configuration component."
+  []
   (let [config (get-config)
         birth-year (:birth-year config)]
     [:div

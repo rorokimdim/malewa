@@ -3,8 +3,9 @@
             [malewa.finance :as f]
             [malewa.dao :refer [get-config]]))
 
-(defn computations-comp [computations]
+(defn computations-comp
   "Builds computations component."
+  [computations]
   (let [config (get-config)]
     [:div
      [:p.small "* At start of year"

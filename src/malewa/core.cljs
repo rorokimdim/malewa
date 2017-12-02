@@ -5,8 +5,9 @@
 
 (enable-console-print!)
 
-(defn on-window-resize [event]
+(defn on-window-resize
   "Updates window dimensions on browser resize."
+  [event]
   (update-window-dims!))
 
 (reagent/render-component
