@@ -32,7 +32,7 @@
         ". That will last you till year "
         (dec (:year broke-year-c))
         ", when you will be " (+ (:year broke-year-c) (- (u/current-year) (:birth-year config)))
-        " years old. After that you will have to cash our your retirement account balance ("
+        " years old. After that you will have to cash out your retirement account balance ("
         (let [pre-tax (:retirement-account-balance-pre-tax broke-year-c)
               post-tax (:retirement-account-balance-post-tax broke-year-c)]
           (str "pre/post tax: " (u/format-number-with-commas (js/parseInt pre-tax))
