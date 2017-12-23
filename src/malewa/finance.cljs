@@ -8,7 +8,7 @@
         capital-gain-tax (:long-term-capital-gain-tax config)
         expense-per-year (:expenses-per-year-during-retirement config)]
     (if (> n target)
-      (* (+ 1 capital-gain-tax) expense-per-year)
+      (/ expense-per-year (- 1 capital-gain-tax))
       0)))
 
 (defn investment
