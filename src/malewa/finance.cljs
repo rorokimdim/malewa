@@ -5,10 +5,10 @@
   "Computes expense at start of Nth year."
   [config n]
   (let [target (:target-retirement-after-years config)
-        capital-gain-tax (:long-term-capital-gain-tax config)
+        tax-rate (:tax-on-selling-investments config)
         expense-per-year (:expenses-per-year-during-retirement config)]
     (if (> n target)
-      (/ expense-per-year (- 1 capital-gain-tax))
+      (/ expense-per-year (- 1 tax-rate))
       0)))
 
 (defn investment

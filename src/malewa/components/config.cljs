@@ -95,8 +95,8 @@
        [:div.cell "Interest on investments per year"]
        [:div.cell.value [config-text-input-comp :interest-per-year]]]
       [:div.row
-       [:div.cell "Long term capital gain tax on selling investments"]
-       [:div.cell.value [config-text-input-comp :long-term-capital-gain-tax]]]
+       [:div.cell "Tax on selling investments"]
+       [:div.cell.value [config-text-input-comp :tax-on-selling-investments]]]
       [:div {:class "row header blue"}
        [:div.cell.title "Retirement Goals"]
        [:div.cell.title]]

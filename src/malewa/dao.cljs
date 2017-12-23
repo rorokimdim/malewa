@@ -16,7 +16,7 @@
     :interest-per-year "Interest on investments per year"
     :target-retirement-after-years "Target retirement after"
     :expenses-per-year-during-retirement "Expenses per year during retirement"
-    :long-term-capital-gain-tax "Long term capital gain tax on selling investments"
+    :tax-on-selling-investments "Tax on selling investments"
     :retirement-account-current-balance "Retirement - Current investment balance"
     :retirement-account-investment-per-year "Retirement - Investment per year"
     :retirement-account-tax-at-withdrawal "Retirement - Tax at withdrawal"
@@ -32,7 +32,7 @@
               :investment-per-year (* 12 1000)
               :target-retirement-after-years 20
               :expenses-per-year-during-retirement (* 2000 12)
-              :long-term-capital-gain-tax 0.20
+              :tax-on-selling-investments 0.20
               :retirement-account-current-balance 100000
               :retirement-account-investment-per-year (+ (* 18000 2) (* 5500 2))
               :retirement-account-tax-at-withdrawal 0.30
