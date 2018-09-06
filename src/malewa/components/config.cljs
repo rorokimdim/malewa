@@ -35,7 +35,7 @@
   [:input {:type "text"
            :id key
            :style {:text-align "right"}
-           :default-value (key (get-config))
+           :value (key (get-config))
            :on-change (partial update-config-on-change key)}])
 
 (defn config-slider-input-comp

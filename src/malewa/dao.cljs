@@ -45,8 +45,8 @@
 
 (defonce WINDOW-DIMS
   (r/atom
-   {:width (.-innerWidth js/window)}
-   {:height (.-innerHeight js/window)}))
+   {:width (.-innerWidth js/window)
+    :height (.-innerHeight js/window)}))
 
 (defn get-config
   "Gets current configuration."
@@ -80,8 +80,8 @@
   "Updates window dimensions to current window dimensions."
   []
   (reset! WINDOW-DIMS
-          {:width (.-innerWidth js/window)}
-          {:height (.-innerHeight js/window)}))
+          {:width (.-innerWidth js/window)
+           :height (.-innerHeight js/window)}))
 
 (defn update-config!
   "Updates configuration for KEY with VALUE."
