@@ -7,12 +7,12 @@
   "Builds summary component."
   [computations]
   (let [config (get-config)
-        target-year (inc (:target-retirement-after-years config))
+        target-year (:target-retirement-after-years config)
         balance-at-retirement (:balance (nth computations target-year))
         expenses-per-year (:expenses-per-year-during-retirement config)
         broke-year-c (f/get-broke-year-computation config computations)]
     [:div
-     [:p "You plan to retire after " (dec target-year) " years."
+     [:p "You plan to retire after " target-year " years."
       " You expect your expenses to be less than "
       (u/format-number-with-commas (js/parseInt (:expenses-per-year-during-retirement config)))
       " per year."]

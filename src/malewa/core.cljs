@@ -1,5 +1,5 @@
 (ns malewa.core
-  (:require [reagent.core :as reagent]
+  (:require [reagent.dom :as rdom]
             [malewa.dao :refer [update-window-dims!]]
             [malewa.components.root :refer [root-comp]]))
 
@@ -10,7 +10,8 @@
   [event]
   (update-window-dims!))
 
-(reagent/render-component
- [root-comp]
- (. js/document (getElementById "app"))
- (.addEventListener js/window "resize" on-window-resize))
+(defn ^:export run []
+  (rdom/render
+   [root-comp]
+   (. js/document (getElementById "app")))
+  (.addEventListener js/window "resize" on-window-resize))

@@ -6,18 +6,18 @@
 
   :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
-                 [org.clojure/core.async  "0.3.442"
+  :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.clojure/clojurescript "1.10.844"]
+                 [org.clojure/core.async  "1.3.618"
                   :exclusions [org.clojure/tools.reader]]
-                 [reagent "0.6.0"]
+                 [reagent "1.0.0"]
                  [alandipert/storage-atom "2.0.1"]
-                 [cljsjs/d3 "4.3.0-5"]
-                 [rid3 "0.1.0-SNAPSHOT"]
-                 [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]]
+                 [cljsjs/d3 "6.2.0-0"]
+                 [rid3 "0.2.2"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]]
 
-  :plugins [[lein-figwheel "0.5.10"]
-            [lein-cljsbuild "1.1.5" :exclusions [[org.clojure/clojure]]]]
+  :plugins [[lein-figwheel "0.5.20"]
+            [lein-cljsbuild "1.1.8" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]
 
@@ -52,8 +52,8 @@
                            :asset-path "js/compiled/out"
                            :output-to "resources/release/js/compiled/malewa.js"
                            :output-dir "resources/release/js/compiled/out"
-                           :optimizations :advanced
-                           :pretty-print false}}]}
+                           :source-map-timestamp true
+                           }}]}
 
   :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default
@@ -100,9 +100,9 @@
   ;; setting up nREPL for Figwheel and ClojureScript dev
   ;; Please see:
   ;; https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.2"]
-                                  [figwheel-sidecar "0.5.10"]
-                                  [com.cemerick/piggieback "0.2.1"]]
+  :profiles {:dev {:dependencies [[binaryage/devtools "1.0.3"]
+                                  [figwheel-sidecar "0.5.20"]
+                                  [com.cemerick/piggieback "0.2.2"]]
                    ;; need to add dev source path here to get user.clj loaded
                    :source-paths ["src" "dev"]
                    ;; for CIDER
